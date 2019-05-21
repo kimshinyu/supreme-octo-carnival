@@ -1,47 +1,52 @@
-import java.io.*; 
-import java.util.*; 
+import java.io.*;
+import java.util.*;
 
-public class App{ //!!!!
-	public static void main(String() args) {
+///things to do
+//movePiece
+//checkedKing
+//isValidMove
+//change getInput to getInputAndMove
+
+public class App {
+	public static void main(String() args) { //donedone
 		//starts chess
-		##sysout("The game is now starting.");
+		System.out.println("The game is now starting.");
 		Chess chess = new Chess();
-	//maybe ask for player names																												!!!!
+//maybe ask for player names		
 		//repeat until game is over:
-		boolean keepPlaying = true;
 		boolean whitePlays = true;
-		while (keepPlaying){
+		while (!chess.checkedKing()){
 			chess.printTable();//prints table (tabulate) for the player
 			if(whitePlays){//do movement for white
-				##sysout("The whites plays.");
-				chess.getInput(/*thing about input and stuff*/);																							 //!!!!!!!!!
+				System.out.println("The whites plays.");
+				chess.getInputAndMove(1);	
 			}
 			else{//do movement for black
-				##sysout("The blacks plays.");
-				chess.getInput(/*thing about input and stuff*/);																							 //!!!!!!!!!
+				System.out.println("The blacks plays.");
+				chess.getInputAndMove(0);	
 			}
-		//check kings (to change keepPlaying, if white cannot move print "blacks win" if black cannot move print "whites win")					!!!!
+		//check kings (to change keepPlaying, if white cannot move print "blacks win" if black cannot move print "whites win")
 		whitePlays = !whitePlays; //changes turns
 		}
-		##sysout("The game has ended.");
-		##sysout("Thanks for playing with us.");
+		System.out.println("The game has ended.");
+		System.out.println("Thanks for playing with us.");
 	}
 }
 
-public class Chess{//will do a version with a matrix, and my objects will be the squares
-	private Square[][] table;
-	private ArrayList<String> log;
-	
-	public Chess(){//initiate new table	//DONE
+	public class Chess {// will do a version with a matrix, and my objects will be the squares
+		private Square[][] table;
+		private ArrayList<String> log;
+
+	public Chess(){//initiate new table	//DONEdone
 		this.log = new ArrayList<String>; //new log
 		this.table = new SquareType[8][8]; //new table
 		//set colour to build
-		builderColour = 0 //0 for black to start
+		builderColour = 0; //0 for black to start
 													//create pieces
 		for(int rank = 0, rank < 8, rank ++){		//iterate by rank //I could do something like table.lenght() and table[i].lenght() and stuff, but I want it not to be different from 8 so whatever
 		
 			if(rank==6)//change colour to build //i'm guessing the colour will be mantained for rank = 7
-			{builderColour = 1} //1 for white
+			{builderColour = 1;} //1 for white
 			
 			for(int file = 0, file < 8, file ++){	//iterate by file
 				switch(rank){			//changing the type to build defined by rank
@@ -70,7 +75,7 @@ public class Chess{//will do a version with a matrix, and my objects will be the
 								break;
 								
 							default:			//in case of unexpected error
-							##sysout("There was an error in making pieces with classes.");
+							System.out.println("There was an error in making pieces with classes.");
 						}
 						
 					case 1: case 6:		//make pawns
@@ -83,19 +88,19 @@ public class Chess{//will do a version with a matrix, and my objects will be the
 								break;
 						
 					default:			//in case of unexpected error
-					##sysout("There was an error in making pieces.");
+					System.out.println("There was an error in making pieces.");
 				}
 			}
 		}
-	}	
+	}
 
 	public movePiece(int fileFrom,int rankFrom,int fileTo,int rankTo){//do everything necesary for movement						//!!!!!!!!!!!!!!!!!!
 		Square fromSquare = this.table[fileFrom][rankFrom];
 		Square toSquare = this.table[fileTo][rankTo];
 		if(this.isValidMove(fromSquare.getType(), fileFrom, rankFrom, fileTo, rankTo)){//checks for validity of movement (out of bounds, reachable by type)	
-			if (toSquare.getColour() == -1){				//if destination is empty, copy in TO and destroy in FROM 	
+			if (toSquare.getType() == EMPTY){				//if destination is empty, copy in TO and destroy in FROM 	
 																						//log movement											!!!!
-				##sysout("Your " + fromSquare.getType() + " has moved to " + fileTo + ":" + rankTo + ".");
+				System.out.println("Your " + fromSquare.getType() + " has moved to " + fileTo + ":" + rankTo + ".");
 
 				if(toSquare.getType() == PAWN && 				
 					(toSquare.getColour() == 0 && rankTo == 7)|
@@ -131,8 +136,8 @@ public class Chess{//will do a version with a matrix, and my objects will be the
 				boolean sameColour = (fromSquare.getColour() == toSquare.getColour());
 				switch(sameColour){
 					case true:												//if blocked by same colour, show error (light error)
-					##sysout("Invalid move. The destination contains a piece of the same colour");
-					chess.getInput(/*thing about input and stuff*/);																							 //!!!!!!!!!
+					System.out.println("Invalid move. The destination contains a piece of the same colour");;
+					chess.getInputAndMove(fromSquare.getColour());																							 //!!!!!!!!!
 					break;
 
 					case false:													 //if blocked by opposite colour, eat 	
@@ -179,190 +184,135 @@ public class Chess{//will do a version with a matrix, and my objects will be the
 				chess.getInput(/*thing about input and stuff*/);																	 //!!!!!!!!!
 		}
 	}
-	
-	private getInput(int fileFrom,int rankFrom,int fileTo,int rankTo){//DONE
-			##sysout("Enter your move: (FileFrom,RankFrom,FileTo,RankTo)");
-			##sysin();
-							//check if From data corresponds to correct colour 	&& not empty																!!!!
-			chess.movePiece(FileFrom,RankFrom,FileTo,RankTo);
+
+	private getInputAndMove(int colour){           //donedone
+		
+		System.out.println("Enter your move: (FileFrom)");
+		Scanner inputff = new Scanner(System.in)
+		int fileFrom = inputff.nextInt();
+		
+		System.out.println("Enter your move: (RankFrom)");
+		Scanner inputrf = new Scanner(System.in)
+		int rankFrom = inputrf.nextInt();
+		
+		if(this.table[fileFrom][rankFrom].getType() == EMPTY | this.table[fileFrom][rankFrom].getColour() != colour){
+			//check if From data corresponds to correct colour 	&& not empty
+			System.out.println("There is an error on the 'FROM' input. Please enter again.");
+			this.getInputAndMove();
+			return;
+		}
+		
+		System.out.println("Enter your move: (FileTo)");
+		Scanner inputft = new Scanner(System.in)
+		int fileTo = inputft.nextInt();
+		
+		System.out.println("Enter your move: (RankTo)");
+		Scanner inputrt = new Scanner(System.in)
+		int rankTo = inputrt.nextInt();
+		
+		if(this.isValidMove(fileFrom,rankFrom,fileTo,rankTo)){
+			this.movePiece(fileFrom,rankFrom,fileTo,rankTo);
+		}
+		else{
+			System.out.println("A problem has ocurred with either the input or the movement or the validation of movement.");
+		}
+	}
+
+	boolean public checkedKing(){  //Returns true if there is a checked king  !!!!!!!!!
+		
 	}
 	
-	private getInput(String data){//if user input asks for log, give	//DONE
+	private getInput(String data){//if user input asks for log, give	//DONEDONE
 		if(data == "log"){
 		this.printLog();
 		}
 		else{
-		##sysout("Input is invalid. (String)");
+		System.out.println("Input is invalid. (String)");;
 		}
 	}
-	
-	private isValidMove(SquareType type, int fileFrom,int rankFrom,int fileTo,int rankTo){ //   !!!!!!!!!!!!!!!!!!!!!!!!
-		
+
+	boolean private isValidMove(int fileFrom,int rankFrom,int fileTo,int rankTo){ //   !!!!!!!!!!!!!!!!!!!!!!!!
+		boolean validity = false;
+		SquareType type = this.table[fileFrom][rankFrom].getType();
 																					//implement against suicide												!!!!
-				switch(fromSquare.getType()){
+		switch(type){
 			case PAWN:				//define if move valid for type																				!!!!
 				//three cases: anywhere one step forward
 								//starting position two steps forward
 								//any position, enemy on diagonal forward one square of distance
-			break;
+				return validity;
+				break;
 			case ROOK:				//define if move valid for type																				!!!!
-			
-			break;
+				return validity;
+				break;
 			case KNIGHT:			//define if move valid for type																				!!!!
-			
-			break;
+				return validity;
+				break;
 			case BISHOP:			//define if move valid for type																				!!!!
-			
-			break;
+				return validity;
+				break;
 			case QUEEN:			//define if move valid for type																				!!!!
-			
-			break;
+				return validity;
+				break;
 			case KING:				//define if move valid for type																				!!!!
-			
-			break;
+				return validity;
+				break;
 			default:
-			##sysout("Error in type movement validation.");				//define error sysout		
+			System.out.println("Error in type movement validation.");			//define error sysout		
 		}
-
+		return validity;
 	}
 
-	public printTable(){//shows current state of the table //taken from outside https://www.geeksforgeeks.org/print-2-d-array-matrix-java/ //DONE
-        // Loop through all rows 
+	public printTable(){//shows current state of the table  //DONEDONE
+        // Loop through all rows //taken from outside https://www.geeksforgeeks.org/print-2-d-array-matrix-java/
         for (Square[] row : this.table) {
             // converting each row as string 
             // and then printing in a separate line 
-            System.out.println(Arrays.toString(row)); 
+            System.out.println(Arrays.toString(row));
 		} 
 	}
-	
-	public printLog(){//prints out log//DONE
+
+	public printLog(){//prints out log//DONEDONE
 	if(this.log.size() > 0){
-	##sysout(toString(this.log));
+	System.out.println(toString(this.log));
 	}
 	else
-	{##sysout("Log is empty.")}
+	{System.out.println("Log is empty.");}
 	}
-}
+	}
 
-class Square{//DONE
-	SquareType type;
-	int colour; //0 for black, 1 for white, -1 for empty
-	
-	//builder
-	public Square(SquareType type, int colour){
-	if(type == EMPTY){colour = -1;}
-	this.type = type;
-	this.colour = colour;
-	}
-	//getters
-	SquareType getType(){
-		return type;
-	}
-	int getColour(){
-		return colour;
-	}
-	//setters
-	SquareType setType(SquareType type){
-		this.type = type;
-	}
-	int setColour(int colour){
-		this.colour = colour;
-	}
-}
+	class Square {// DONEDONE
+		SquareType type;
+		int colour; // 0 for black, 1 for white, -1 for empty
 
-enum SquareType{//DONE
+		// builder
+		public Square(SquareType type, int colour) {
+			if (type == EMPTY) {
+				colour = -1;
+			}
+			this.type = type;
+			this.colour = colour;
+		}
+
+		// getters
+		SquareType getType() {
+			return type;
+		}
+
+		int getColour() {
+			return colour;
+		}
+
+		// setters
+		SquareType setType(SquareType type) {
+			this.type = type;
+		}
+
+		int setColour(int colour) {
+			this.colour = colour;
+		}
+	}
+
+enum SquareType{//DONEDONE
 	EMPTY,KING,QUEEN,ROOK,BISHOP,KNIGHT,PAWN;	
 }
-
-
-
-
-
-4
-/*
-public class Chess{ //I'm going to make two versions; one with hashmaps (with a "piece" class)
-//cant do "square class" version since it is impossible (aka hard) to make a check to a particular square (unless hashmaps are used)
-	public static void main(String() args) {
-		
-		
-		
-	}
-}
-
-
-//columns are "files", rows are "ranks"
-class Table{
-	HashMap<Position,Piece> hMap; //	KING,QUEEN,ROOK,BISHOP,KNIGHT,PAWN
-	//List<String> log; to log all movements done
-
-
-	void movePiece(Type pieceType, int colour, int pieceFile, int pieceRank){
-		//check if movement is legal for that type and colour
-		//check if destination is empty, ally or enemy
-		
-		//check if movement is pawn>final rank
-		if(pieceType == PAWN){
-			//out "what new piece"
-			//change type to new piece
-		}
-		//do movement
-	}
-}
-
-class Piece{
-	PieceType type; //	KING,QUEEN,ROOK,BISHOP,KNIGHT,PAWN
-	int colour; //		-1 = blank, 0 = white, 1 = black
-	
-	boolean equals(Piece piece){
-		if( piece.type == this.type && piece.colour == this.colour){
-		return true;
-	}
-	return false
-	}
-	PieceType setType(Type type){
-		this.type = type;
-	}
-	int setColour(int colour){
-		this.colour = colour;
-	}
-	PieceType getType(){
-		return type;
-	}
-	int getColour(){
-}
-}
-
-enum PieceType{
-	KING,QUEEN,ROOK,BISHOP,KNIGHT,PAWN;	
-}
-
-class Position{
-	int file;	// 0 is null, 1~8 left to right
-	int rank;	// 0 is null, 1~8 white to black (normally down to up)
-
-	boolean isValidPosition(){
-		if(this.file >= 1 && this.file <= 8 && this.rank >= 1 && this.rank <= 8){
-			return true;
-		}
-		return false;
-	}
-	boolean equals(Position position){
-		if( position.file == this.file && position.rank == this.rank){
-			return true;
-		}
-		return false
-	}
-	int getFile(){
-		return file;
-	}
-	int getRank(){
-		return rank;
-	}
-	int setFile(int file){
-		this.file = file;
-	}
-	int setRank(int rank){
-		this.rank = rank;
-	}
-}
-*/
