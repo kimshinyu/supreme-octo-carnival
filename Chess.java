@@ -9,7 +9,9 @@ import java.util.*;
 public class Chess{// will do a version with a matrix, and my objects will be the squares
 	private Square[][] table;
 	private ArrayList<String> log;
+	private static Scanner input = new Scanner(System.in);
 	
+
 	public Chess(){//initiate new table	//DONEdone
 		this.log = new ArrayList<String>(); //new log
 		this.table = new Square[8][8]; //new table
@@ -62,25 +64,105 @@ public class Chess{// will do a version with a matrix, and my objects will be th
 		}
 	}
 
-	public void movePiece(int rankFrom,int rankTo,int fileFrom,int fileTo){//do everything necesary for movement						//!!!!!!!!!!!!!!!!!!
-		Square fromSquare = this.table[rankFrom][fileFrom];
-		Square toSquare = this.table[rankTo][fileTo];
-		if (toSquare.getType() == SquareType.EMPTY){				//if destination is empty, copy in TO and destroy in FROM 	//log movement		!!!!
-			System.out.println("Your " + fromSquare.getType() + " has moved to " + rankTo + ":" + fileTo + ".");
-			if(toSquare.getType() == SquareType.PAWN && (toSquare.getColour() == 0 && rankTo == 7) | (toSquare.getColour() == 1 && rankTo == 0)){ 				  //if PAWN&finalRank, check for change (ask for input) 	 //log movement											!!!!
-				rankUpPawn(rankFrom,rankTo,fileFrom,fileTo);
+	private int getInput(String s){
+		System.out.println("Please enter the " + s + ": ");
+		while(!input.hasNextInt()){
+			String text = input.next();
+			if("table".equals(text)){
+				printTable();
+			}
+			if("log".equals(text)){
+				printLog();
+			}
+			System.out.println("Please enter the " + s + ": ");
+		}
+		int result = input.nextInt();
+		return result;
+	}
+	
+	
+	public void getInputAndMove(int colour){           //donedone
+
+		int rankFrom = getInput("Vertical Position (RankFrom)");
+		int fileFrom = getInput("Horizontal Position (FileFrom)");
+		
+		if( !inTable(rankFrom) || !inTable(fileFrom) || 
+				SquareType.EMPTY == this.table[rankFrom][fileFrom].getType() || 
+					this.table[rankFrom][fileFrom].getColour() != colour){
+			
+			//check if From data corresponds to correct colour 	&& not empty
+
+			System.out.println("Please enter a correct piece to move.");
+			System.out.println("Let's try it again.");
+			
+			getInputAndMove(colour);
+			
+		}else{
+			
+			System.out.println("You, (" + (colour == 0? "Black": "White") + "), are playing your " + table[rankFrom][fileFrom].getType() + ".");
+			
+			int rankTo = getInput("Vertical Position (RankTo)");
+			int fileTo = getInput("Horizontal Position (FileTo)");
+			
+			if(inTable(fileTo) && inTable(rankTo) && //movimiento dentro de la tabla
+					!(rankFrom == rankTo && fileFrom == fileTo) && //me estoy moviendo
+						isValidMove(rankFrom,rankTo,fileFrom,fileTo)){ //el movimiento es válido
+				movePiece(rankFrom,rankTo,fileFrom,fileTo);
+			}
+			else{
+				System.out.println("A problem has ocurred with the validation of the movement.");
+				System.out.println("Please enter again the information.");
+				this.getInputAndMove(colour);
 			}
 		}
-		else{								 //if blocked by opposite colour, eat 	//log movement													!!!!
-			System.out.println("Your " + fromSquare.getType() + " from square " + rankFrom + ":" + fileFrom + " has eaten the enemy " + toSquare.getType() + " from square " + rankTo + ":" + fileTo + ".");
-			if(toSquare.getType() == SquareType.PAWN && (toSquare.getColour() == 0 && rankTo == 7) | (toSquare.getColour() == 1 && rankTo == 0)){ 				  //if PAWN&finalRank, check for change (ask for input) 	 //log movement											!!!!
-				rankUpPawn(rankFrom,rankTo,fileFrom,fileTo);
+	}
+ 	
+	public boolean checkedKing(){  //Returns true if there is a checked king  !!!!!!!!! FOR NOW IT RETURNS ONLY IF ONE OF THE KINGS DIES
+		int kingCount = 0;
+		for(Square[] rank : table){
+			for(Square s : rank){
+				kingCount = kingCount + (SquareType.KING == s.getType()?1:0);
 			}
+		}
+		return kingCount == 1;
+	}
+
+	public void printTable(){//shows current state of the table  //DONEDONE
+	    // Loop through all rows //taken from outside https://www.geeksforgeeks.org/print-2-d-array-matrix-java/
+		System.out.println("[\tF0\t,\tF1\t,\tF2\t,\tF3\t,\tF4\t,\tF5\t,\tF6\t,\tF7\t]");
+		int i = 0;
+	    for (Square[] rank : this.table) {
+	        // converting each row as string 
+	        // and then printing in a separate line 
+	    	System.out.print("R"+i);
+	        System.out.println(Arrays.toString(rank));
+	        i++;
+		} 
+	}
+	
+	public void printLog(){//prints out log//DONEDONE
+		System.out.println(this.log.isEmpty()? "Log is empty.": this.log);
+	}
+	
+	
+	
+	private void movePiece(int rankFrom,int rankTo,int fileFrom,int fileTo){//do everything necesary for movement						//!!!!!!!!!!!!!!!!!!
+		Square fromSquare = this.table[rankFrom][fileFrom];
+		Square toSquare = this.table[rankTo][fileTo];//if destination is empty, copy in TO and destroy in FROM 	//log movement		!!!!
+		System.out.println(this.table[rankTo][fileTo].getType() == SquareType.EMPTY?
+				"Your " + fromSquare.getType() + " has moved to " + rankTo + ":" + fileTo + ".":
+					"Your " + fromSquare.getType() + " from square " + rankFrom + ":" + fileFrom + " has eaten the enemy " + toSquare.getType() + " from square " + rankTo + ":" + fileTo + ".");
+		if(canRankUpPawn(fromSquare, rankTo)){ 				  //if PAWN&finalRank, check for change (ask for input) 	 //log movement											!!!!
+			rankUpPawn(rankFrom,rankTo,fileFrom,fileTo);
 		}
 		toSquare.setColour(fromSquare.getColour());
 		toSquare.setType(fromSquare.getType());
 		fromSquare.setType(SquareType.EMPTY);
 		fromSquare.setColour(-1);
+	}
+	
+	private boolean canRankUpPawn(Square fromSquare, int rankTo){
+		return fromSquare.getType() == SquareType.PAWN && ((fromSquare.getColour() == 0 && rankTo == 7) || (fromSquare.getColour() == 1 && rankTo == 0));
 	}
 	
 	private void rankUpPawn(int rankFrom,int rankTo,int fileFrom,int fileTo){
@@ -100,71 +182,10 @@ public class Chess{// will do a version with a matrix, and my objects will be th
 		}
 	}
 	
- 	public void getInputAndMove(int colour){           //donedone
-
-		System.out.println("Enter your piece data: (RankFrom: Vertical Position)");
-		Scanner inputrf = new Scanner(System.in);
-		int rankFrom = inputrf.nextInt();
+	private boolean isValidMove(int rankFrom,int rankTo,int fileFrom,int fileTo){ //   !!!!!!!!!!!!!!!!!!!!!!!! //TO DO: implement against king suicide	
 		
-		System.out.println("Enter your piece data: (FileFrom: Horizontal Position)");
-		Scanner inputff = new Scanner(System.in);
-		int fileFrom = inputff.nextInt();
-		
-		if(fileFrom < 0 || fileFrom > 7 ||rankFrom < 0 || rankFrom > 7|| SquareType.EMPTY.equals(this.table[rankFrom][fileFrom].getType()) | this.table[rankFrom][fileFrom].getColour() != colour){
-			
-			//check if From data corresponds to correct colour 	&& not empty
-
-			System.out.println("Please enter a correct piece to move.");
-			System.out.println("Let's try it again.");
-			
-			getInputAndMove(colour);
-			
-		}else{
-			
-			System.out.println("You, (" + (colour == 0? "Black": "White") + "), are playing your " + table[rankFrom][fileFrom].getType() + ".");
-			
-			System.out.println("Enter your move: (RankTo: Vertical Position)");
-			Scanner inputrt = new Scanner(System.in);
-			int rankTo = inputrt.nextInt();
-			
-			System.out.println("Enter your move: (FileTo: Vertical Position)");
-			Scanner inputft = new Scanner(System.in);
-			int fileTo = inputft.nextInt();
-			
-			if( !(fileFrom < 0 && fileFrom > 7 && rankFrom < 0 && rankFrom > 7) && !(rankFrom == rankTo && fileFrom == fileTo) && isValidMove(rankFrom,rankTo,fileFrom,fileTo)){
-				this.movePiece(rankFrom,rankTo,fileFrom,fileTo);
-			}
-			else{
-				System.out.println("A problem has ocurred with the validation of the movement.");
-				System.out.println("Please enter again the information.");
-				this.getInputAndMove(colour);
-			}
-			
-			if(checkedKing()){
-				inputft.close();
-				inputrt.close();
-			}
-		}
-		if(checkedKing()){
-			inputff.close();
-			inputrf.close();
-		}
-	}
- 	
-	public boolean checkedKing(){  //Returns true if there is a checked king  !!!!!!!!! FOR NOW IT RETURNS ONLY IF ONE OF THE KINGS DIES
-		int kingCount = 0;
-		for(Square[] rank : table){
-			for(Square s : rank){
-				kingCount = kingCount + (SquareType.KING == s.getType()?1:0);
-			}
-		}
-		return kingCount == 1;
-	}
-
-	private boolean isValidMove(int rankFrom,int rankTo,int fileFrom,int fileTo){ //   !!!!!!!!!!!!!!!!!!!!!!!! //TODO: implement against king suicide	
-		
-		if(table[rankFrom][fileFrom].getColour() == table[rankTo][fileTo].getColour()){
-			System.out.println("Invalid move. The destination contains a piece of the same colour");
+		if(areSameColour(rankFrom, rankTo, fileFrom, fileTo)){
+			System.out.println("Invalid move. Pieces are of the same team.");
 			return false;
 		}
 		switch(this.table[rankFrom][fileFrom].getType()){
@@ -172,35 +193,45 @@ public class Chess{// will do a version with a matrix, and my objects will be th
 				//three cases: anywhere one step forward
 								//starting position two steps forward
 								//any position, enemy on diagonal forward one square of distance
+				System.out.println("You have tried to move your " + this.table[rankFrom][fileFrom].getType() + ".");
 				return 	((this.table[rankFrom][fileFrom].getColour() == 0
 						&& ((rankFrom == 1 && rankTo == 3 && fileFrom == fileTo && table[2][fileFrom].getType() == SquareType.EMPTY) 
-							|| (fileFrom == fileTo && rankTo-rankFrom == 1)
-							|| (Math.abs(fileFrom-fileTo) == 1 && rankTo-rankFrom == 1)
+							|| (fileFrom == fileTo && rankTo-rankFrom == 1 && table[rankTo][fileTo].getType() == SquareType.EMPTY)
+							|| (Math.abs(fileFrom-fileTo) == 1 && rankTo-rankFrom == 1 && areEnemies(rankFrom, rankTo, fileFrom, fileTo))
 							))
 						|| 
 						(this.table[rankFrom][fileFrom].getColour() == 1 
 						&& ((rankFrom == 6 && rankTo == 4 && fileFrom == fileTo && table[5][fileFrom].getType() == SquareType.EMPTY) 
-							|| (fileFrom == fileTo && rankFrom-rankTo == 1)
-							|| (Math.abs(fileFrom-fileTo) == 1 && rankFrom-rankTo == 1)
+							|| (fileFrom == fileTo && rankFrom-rankTo == 1 && table[rankTo][fileTo].getType() == SquareType.EMPTY)
+							|| (Math.abs(fileFrom-fileTo) == 1 && rankFrom-rankTo == 1 && areEnemies(rankFrom, rankTo, fileFrom, fileTo))
 							))
 						);
 			
 			case ROOK:				//define if move valid for type																				!!!!
+				System.out.println("You have tried to move your " + this.table[rankFrom][fileFrom].getType() + ".");
 				return (((rankFrom == rankTo) && noHorizontalBlockage(rankFrom, fileFrom, fileTo))
 				|| ((fileFrom == fileTo) && noVerticalBlockage(rankFrom, rankTo, fileFrom)));
 			
 			case KNIGHT:			//define if move valid for type																				!!!!
+				System.out.println("You have tried to move your " + this.table[rankFrom][fileFrom].getType() + ".");
 				return (Math.abs(rankFrom - rankTo) == 1 && Math.abs(fileFrom - fileTo) == 2) || (Math.abs(rankFrom - rankTo) == 2 && Math.abs(fileFrom - fileTo) == 1);
 			
 			case BISHOP:			//define if move valid for type																				!!!!
+				System.out.println("You have tried to move your " + this.table[rankFrom][fileFrom].getType() + ".");
 				return ((Math.abs(rankFrom - rankTo) == Math.abs(fileFrom - fileTo)) && noDiagonalBlockage(rankFrom, rankTo, fileFrom, fileTo));
 			
 			case QUEEN:				//define if move valid for type																				!!!!
-				return (((Math.abs(rankFrom - rankTo) == Math.abs(fileFrom - fileTo)) && noDiagonalBlockage(rankFrom, rankTo, fileFrom, fileTo))
-						|| (((rankFrom == rankTo) && noHorizontalBlockage(rankFrom, fileFrom, fileTo))
-								|| ((fileFrom == fileTo) && noVerticalBlockage(rankFrom, rankTo, fileFrom))));
+				System.out.println("You have tried to move your " + this.table[rankFrom][fileFrom].getType() + ".");
+				return (
+						((Math.abs(rankFrom - rankTo) == Math.abs(fileFrom - fileTo)) && noDiagonalBlockage(rankFrom, rankTo, fileFrom, fileTo)) //se mueve diagonalmente
+						|| (
+								((rankFrom == rankTo) && noHorizontalBlockage(rankFrom, fileFrom, fileTo)) //se mueve horizontalmente
+								|| ((fileFrom == fileTo) && noVerticalBlockage(rankFrom, rankTo, fileFrom)) //se mueve verticalmente
+							)
+						);
 			
 			case KING:				//define if move valid for type																				!!!!
+				System.out.println("You have tried to move your " + this.table[rankFrom][fileFrom].getType() + ".");
 				return Math.abs(rankFrom - rankTo) <= 1 && Math.abs(fileFrom - fileTo) <= 1;
 				
 			default:
@@ -208,33 +239,22 @@ public class Chess{// will do a version with a matrix, and my objects will be th
 				return false; //si no toma ningun tipo aceptable
 		}
 	}
-
-	public void printTable(){//shows current state of the table  //DONEDONE
-	    // Loop through all rows //taken from outside https://www.geeksforgeeks.org/print-2-d-array-matrix-java/
-		System.out.println("[\t0\t,\t1\t,\t2\t,\t3\t,\t4\t,\t5\t,\t6\t,\t7\t]");
-		int i = 0;
-	    for (Square[] rank : this.table) {
-	        // converting each row as string 
-	        // and then printing in a separate line 
-	    	System.out.print(i);
-	        System.out.println(Arrays.toString(rank));
-	        i++;
-		} 
-	}
 	
-	private boolean noHorizontalBlockage(int rankFrom, int rankTo, int file){
-		boolean result = true;
-		for(int i = 1 + (rankTo < rankFrom?rankTo:rankFrom); i < (rankTo < rankFrom?rankFrom:rankTo) ; i++){
-			result = result && SquareType.EMPTY == this.table[i][file].getType();
-		}
-		return result;
-	}
-	
-	private boolean noVerticalBlockage(int rank, int fileFrom, int fileTo){
-		boolean result = true;
+	private boolean noHorizontalBlockage(int rank, int fileFrom, int fileTo){
+		boolean result = !(fileFrom == fileTo);
 		for(int i = 1 + (fileTo < fileFrom?fileTo:fileFrom); i < (fileTo < fileFrom?fileFrom:fileTo) ; i++){
 			result = result && SquareType.EMPTY == this.table[rank][i].getType();
 		}
+		System.out.println(result?null:"Horizontal movement error.");
+		return result;
+	}
+	
+	private boolean noVerticalBlockage(int rankFrom, int rankTo, int file){
+		boolean result = !(rankFrom == rankTo);
+		for(int i = 1 + (rankTo < rankFrom?rankTo:rankFrom); i < (rankTo < rankFrom?rankFrom:rankTo) ; i++){
+			result = result && SquareType.EMPTY == this.table[i][file].getType();
+		}
+		System.out.println(result?null:"Vertical movement error.");
 		return result;
 	}
 	
@@ -246,8 +266,19 @@ public class Chess{// will do a version with a matrix, and my objects will be th
 		return result;
 	}
 	
-	public void printLog(){//prints out log//DONEDONE
-		System.out.println(this.log.isEmpty()? "Log is empty.": this.log);
+	private boolean inTable(int position){
+		return !(position < 0 || position > 7);
 	}
+	
+	private boolean areEnemies(int rankFrom,int rankTo,int fileFrom,int fileTo){
+		return table[rankFrom][fileFrom].getType() != SquareType.EMPTY &&
+				table[rankTo][fileTo].getType() != SquareType.EMPTY &&
+				Math.abs(this.table[rankFrom][fileFrom].getColour() - this.table[rankTo][fileTo].getColour()) == 1;
+	}
+	
+	private boolean areSameColour(int rankFrom,int rankTo,int fileFrom,int fileTo){
+		return (this.table[rankFrom][fileFrom].getColour() - this.table[rankTo][fileTo].getColour()) == 0;
+	}
+	
 }
 

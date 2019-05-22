@@ -45,7 +45,7 @@ public class Square {// DONEDONE
 			case KING:
 				return c + "KING" + "\t";
 			case EMPTY:
-				return "\t" +"EMPTY" + "\t";
+				return "\t" + "0" + "\t";
 			default:
 				return "\t" + "ERROR" + "\t";
 		}
