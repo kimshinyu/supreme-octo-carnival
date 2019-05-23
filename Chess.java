@@ -10,7 +10,7 @@ public class Chess{// will do a version with a matrix, and my objects will be th
 	private Square[][] table;
 	private ArrayList<String> log;
 	private static Scanner input = new Scanner(System.in);
-	
+	private static int logCount = 0;
 
 	public Chess(){//initiate new table	//DONEdone
 		this.log = new ArrayList<String>(); //new log
@@ -154,7 +154,9 @@ public class Chess{// will do a version with a matrix, and my objects will be th
 					"Your " + fromSquare.getType() + " from square " + rankFrom + ":" + fileFrom + " has eaten the enemy " + toSquare.getType() + " from square " + rankTo + ":" + fileTo + ".");
 		if(canRankUpPawn(fromSquare, rankTo)){ 				  //if PAWN&finalRank, check for change (ask for input) 	 //log movement											!!!!
 			rankUpPawn(rankFrom,rankTo,fileFrom,fileTo);
+			log.add("Pawn to " + fromSquare.getType() + "; ");
 		}
+		log.add(logCount++ + ". " + (fromSquare.getColour() == 0?"Black":"White") + fromSquare.getType() + " - " + rankFrom + ":" + fileFrom + " to " + rankTo + ":" + fileTo + "  \n");
 		toSquare.setColour(fromSquare.getColour());
 		toSquare.setType(fromSquare.getType());
 		fromSquare.setType(SquareType.EMPTY);
@@ -169,11 +171,9 @@ public class Chess{// will do a version with a matrix, and my objects will be th
 		Square fromSquare = this.table[rankFrom][fileFrom];
 	    System.out.println("Your pawn has adquired a rank up! Please enter the desired rank: (QUEEN,ROOK,BISHOP,KNIGHT)");
 		SquareType newRank = SquareType.EMPTY;
-		while(newRank.equals(SquareType.EMPTY) || newRank.equals(SquareType.KING) || newRank.equals(SquareType.PAWN)){
-			Scanner input = new Scanner(System.in);
-			newRank.fromString(input.next());
-			input.close();
-			if(newRank.equals(SquareType.EMPTY) || newRank.equals(SquareType.KING) || newRank.equals(SquareType.PAWN)){
+		while(newRank == SquareType.EMPTY || newRank == SquareType.KING || newRank == SquareType.PAWN){
+			newRank = SquareType.valueOf(input.next());
+			if(newRank == SquareType.EMPTY || newRank == SquareType.KING || newRank == SquareType.PAWN){
 				System.out.println("Please enter a valid option (QUEEN,ROOK,BISHOP,KNIGHT): ");
 			}else{
 		        fromSquare.setType(newRank);
@@ -259,10 +259,18 @@ public class Chess{// will do a version with a matrix, and my objects will be th
 	}
 	
 	private boolean noDiagonalBlockage(int rankFrom,int rankTo,int fileFrom,int fileTo){
-		boolean result = true;
-		for(int i = 1 ; i < Math.abs(rankFrom - rankTo); i++){
-				result = result && SquareType.EMPTY == this.table[(rankTo < rankFrom?rankTo:rankFrom)+i][(fileTo < fileFrom?fileTo:fileFrom)+i].getType();
-		}
+		boolean result = !(rankFrom == rankTo && fileFrom == fileTo);
+			boolean situation = 0 > (rankFrom - rankTo)*(fileFrom - fileTo);
+			if(situation){
+				for(int i = 1 ; i < Math.abs(rankFrom - rankTo); i++){
+					result = result && SquareType.EMPTY == (rankFrom < rankTo? this.table[rankFrom + i][fileFrom - i].getType(): this.table[rankFrom - i][fileFrom + i].getType());
+				}
+			}else{
+				for(int i = 1 ; i < Math.abs(rankFrom - rankTo); i++){
+					result = result && SquareType.EMPTY == (rankFrom < rankTo? this.table[rankFrom + i][fileFrom + i].getType(): this.table[rankFrom - i][fileFrom - i].getType());
+				}
+			}
+		System.out.println(result?null:"Diagonal movement error.");
 		return result;
 	}
 	
@@ -281,4 +289,21 @@ public class Chess{// will do a version with a matrix, and my objects will be th
 	}
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
