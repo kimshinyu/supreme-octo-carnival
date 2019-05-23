@@ -1,3 +1,4 @@
-public enum SquareType{//DONEDONE
+package chess;
+enum SquareType{//DONEDONE
 	EMPTY,KING,QUEEN,ROOK,BISHOP,KNIGHT,PAWN;	
 }

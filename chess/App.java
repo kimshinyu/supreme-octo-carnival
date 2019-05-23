@@ -1,10 +1,11 @@
+package chess;
 
 
 public class App{
 	public static void main(String[] args) { //done done
 		//starts chess
-		System.out.println("The game is now starting.");
-		Chess chess = new Chess();
+		System.out.println("The chess game is now starting.");
+		Table chess = new Table();
 //maybe ask for player names		
 		//repeat until game is over:
 		boolean whitePlays = true;
