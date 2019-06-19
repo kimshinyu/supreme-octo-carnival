@@ -2,7 +2,7 @@ package chess;
 
 
 public class App{
-	public static void main(String[] args) { //done done
+	public static void main() { //done done
 		//starts chess
 		System.out.println("The chess game is now starting.");
 		Table chess = new Table();

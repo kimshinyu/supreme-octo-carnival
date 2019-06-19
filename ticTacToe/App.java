@@ -4,7 +4,7 @@ import ticTacToe.Table;
 
 public class App {
 
-	public static void main(String[] args) {
+	public static void main() {
 		//starts tic tac toe
 		System.out.println("The tic-tac-toe game is now starting.");
 		System.out.println("You will be playing against the AI.");
