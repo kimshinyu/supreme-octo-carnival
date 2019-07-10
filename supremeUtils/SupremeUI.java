@@ -16,10 +16,8 @@ public class SupremeUI extends JFrame {
 
 	private JPanel panel;
 	private JTextArea textArea;
-	private JTextField commandsField;
+	public JTextField commandsField;
 	private JButton quitButton;
-	public SupremeController controller = new SupremeController();
-
 	/**
 	 * LA idea de tener esta clase es separar el UI del proyecto actual (games),
 	 * y poder utilizarlo en otras cosas
@@ -29,13 +27,23 @@ public class SupremeUI extends JFrame {
 	public SupremeUI(String title) {
 		initUI(title);
 	}
-
+	
+	public static void main(String[] args){
+		new SupremeUI("SupremeUI");
+	}
+	
+	public void show(String s){
+		this.textArea.append(s + "\n");
+	}
+	
 	public final void initUI(String title) {
-
+		
 		initPanel();
 		initTextArea();
 		initCommandsField();
+		setCommandsFieldListeners();
 		initQuitButton();
+		setQuitButtonListeners();
 
 		panel.add(textArea);
 		panel.add(commandsField);
@@ -46,6 +54,7 @@ public class SupremeUI extends JFrame {
 		setSize(800, 700);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		System.out.println("END");
 	}
 
 	private void initPanel() {
@@ -67,13 +76,11 @@ public class SupremeUI extends JFrame {
 		this.commandsField = new JTextField("Enter your commands here...");
 		commandsField.setBounds(0, 600, 800, 30);
 		commandsField.setEnabled(true);
-		setCommandsFieldListeners();
 	}
 
 	private void initQuitButton() {
 		this.quitButton = new JButton("Quit");
 		quitButton.setBounds(350, 640, 80, 30);
-		setQuitButtonListeners();
 	}
 
 	private void setCommandsFieldListeners() {
