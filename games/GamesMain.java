@@ -1,12 +1,12 @@
+package games;
 
-
-import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.util.Scanner;
+
+import supremeUtils.SupremeUI;
 
 public class GamesMain {
 	
-	private static Scanner gameSelector = new Scanner(System.in);
+	private static SupremeUI ui = new SupremeUI("Games");
 	
 	public static void main() throws IOException {
 		boolean gameChosen = false;
@@ -14,14 +14,14 @@ public class GamesMain {
 		while(!gameChosen){
 			System.out.println("0.Chess");
 			System.out.println("1.Tic-Tac-Toe");
-			if(gameSelector.hasNext()){
-				int sel = gameSelector.nextInt();
+			if(ui.controller.hasNext()){
+				int sel = ui.controller.nextInt();
 				switch(sel){
 					case 0:
-						chess.App.main();
+						games.chess.App.main();
 						return;
 					case 1:
-						ticTacToe.App.main();
+						games.ticTacToe.App.main();
 						return;
 					default:
 				}

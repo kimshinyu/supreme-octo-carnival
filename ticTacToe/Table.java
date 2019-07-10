@@ -1,5 +1,0 @@
-package ticTacToe;
-
-class Table {
-	
-}

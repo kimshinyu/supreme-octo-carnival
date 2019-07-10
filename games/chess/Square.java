@@ -1,4 +1,4 @@
-package chess;
+package games.chess;
 class Square {// DONEDONE
 	SquareType type;
 	int colour; // 0 for black, 1 for white, -1 for empty

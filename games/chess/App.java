@@ -1,4 +1,4 @@
-package chess;
+package games.chess;
 
 
 public class App{

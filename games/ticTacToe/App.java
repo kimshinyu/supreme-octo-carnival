@@ -1,6 +1,4 @@
-package ticTacToe;
-
-import ticTacToe.Table;
+package games.ticTacToe;
 
 public class App {
 
