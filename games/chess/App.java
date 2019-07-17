@@ -1,9 +1,27 @@
 package games.chess;
 
+import supremeUtils.STextArea;
+import supremeUtils.STextField;
+import supremeUtils.SupremeChatUI;
 
 public class App{
-	public static void main() { //done done
+	public static void init(SupremeChatUI ui) { //done done
+		
+		
+		
+		
+		/**
+		 ** Lo que me falta ver es cambiar la logica de todo, para que no se base en 'esperar el input de consola', sino que se maneje a comandos
+		**/
+		
+		
+		
+		
+		
+		
 		//starts chess
+		STextArea.getInstance(ui.textArea);
+		STextField.getInstance(ui.commandsField);
 		System.out.println("The chess game is now starting.");
 		Table chess = new Table();
 //maybe ask for player names		
