@@ -4,7 +4,7 @@ import supremeUtils.STextArea;
 import supremeUtils.STextField;
 import supremeUtils.SupremeChatUI;
 
-public class App{
+public class MainGame{
 	public static void init(SupremeChatUI ui) { //done done
 		
 		

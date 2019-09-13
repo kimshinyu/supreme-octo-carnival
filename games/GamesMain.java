@@ -55,10 +55,13 @@ public class GamesMain {
 					ui.commandsField.setText(null);
 					switch (selector) {
 					case "chess":
-						games.chess.App.init(ui);
+						games.chess.MainGame.init(ui);
 						return;
 					case "tictactoe":
-						games.ticTacToe.App.main(ui);
+						games.ticTacToe.MainGame.init(ui);
+						return;
+					case "checkers":
+						games.checkers.MainGame.init(ui);
 						return;
 					default:
 					}

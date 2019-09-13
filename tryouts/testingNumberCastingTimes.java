@@ -123,4 +123,7 @@ public class testingNumberCastingTimes {
 			System.out.println(sc.next() + " can't be fitted anywhere.");
 		}
 	}
+
+	
+
 }
