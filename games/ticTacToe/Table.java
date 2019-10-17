@@ -8,13 +8,13 @@ import games.chess.Square;
 
 class Table {
 	
-	Map<Position, TicTacToeValue> table;
+	Map<Position, TicTacToeCellValue> table;
 	
 	public Table(){
-		table = new HashMap<Position, TicTacToeValue>();
+		table = new HashMap<Position, TicTacToeCellValue>();
 		for(int i = 0; i < 3; i++){
 			for(int j = 0; j < 3; j++){
-				table.put(new Position(i,j), TicTacToeValue.EMPTY);
+				table.put(new Position(i,j), TicTacToeCellValue.EMPTY);
 			}
 		}
 	}
