@@ -60,55 +60,210 @@ plot(xC,distribucionC, type='l')
 #  tribución E(Î») (para algún Î» a elección) y guardar el promedio de ambas, es decir, x 2 . Repetir
 #1000 veces y a partir de los valores obtenidos realizar un histograma, un boxplot y un QQ-plot.
 #¿Qué características tienen?
-
-xa1 <- rexp(1000,0.4)
-xa2 <- rexp(1000,0.4)
-xa3 <- (x1+x2)/2
-#hist(x3)
-boxplot(xa3)
-qqnorm(xa3)
-mean(x3)
-median(x3)
-(mean(x1)+mean(x2))/2
+delta <- 0.4
+x1 <- rexp(1000,delta)
+x2 <- rexp(1000,delta)
+x3 <- (x1+x2)/2
+hist(x3)
+boxplot(x3)
+qqnorm(x3)
+qqline(x3)
 
 #  (b) Aumentar a cinco las variables promediadas, es decir, considerar ahora n = 5 observaciones de
 #variables aleatorias independientes con la misma distribución del ítem anterior y guardar x 5 .
 #Repetir 1000 veces y realizar un histograma, un boxplot y un QQ-plot para los valores obtenidos.
 #Comparar con los obtenidos en el ítem anterior. ¿Qué se observa?
 
-n <- 2
+delta <- 0.4
+n <- 5
 xn <- array(0,c(1000,n))
 for(i in 1:n){
   for(j in 1:1000){
-    xn[j,i] <- rexp(1,0.4)[[1]]
+    xn[j,i] <- rexp(1,delta)[[1]]
   }
 }
 promedion <- rep(0,1000)
 for(k in 1:1000){
   promedion[k] <- sum(xn[k,])/n
 }
+hist(promedion)
 boxplot(promedion)
+qqnorm(promedion)
+qqline(promedion)
 
 
 #  (c) Aumentar a n = 30 el número de observaciones de v.a.i.i.d. y repetir el ítem anterior. Repetir
 #con n = 500.
+
+delta <- 0.4
+n <- 30
+xn <- array(0,c(1000,n))
+for(i in 1:n){
+  for(j in 1:1000){
+    xn[j,i] <- rexp(1,delta)[[1]]
+  }
+}
+promedion <- rep(0,1000)
+for(k in 1:1000){
+  promedion[k] <- sum(xn[k,])/n
+}
+hist(promedion)
+boxplot(promedion)
+qqnorm(promedion)
+qqline(promedion)
+
+
+delta <- 0.4
+n <- 500
+xn <- array(0,c(1000,n))
+for(i in 1:n){
+  for(j in 1:1000){
+    xn[j,i] <- rexp(1,delta)[[1]]
+  }
+}
+promedion <- rep(0,1000)
+for(k in 1:1000){
+  promedion[k] <- sum(xn[k,])/n
+}
+hist(promedion)
+boxplot(promedion)
+qqnorm(promedion)
+qqline(promedion)
 #(d) ¿Qué pasaría si se siguiera aumentando el tamaño de la muestra?
+#Los gráficos presentarían dos características: Los valores se irían concentrando mas alrededor de la media,
+#y las gráficas en si se irían pareciendo más al de una normal.
 #  (e) Por último, hacer un boxplot de los 4 conjuntos de datos en el mismo gráfico (es decir, â€œboxplots
 #                                                                                    paralelosâ€).
 
+delta <- 0.4
+n <- 2
+xn <- array(0,c(1000,n))
+for(i in 1:n){
+  for(j in 1:1000){
+    xn[j,i] <- rexp(1,delta)[[1]]
+  }
+}
+promedio2 <- rep(0,1000)
+for(k in 1:1000){
+  promedio2[k] <- sum(xn[k,])/n
+}
+
+n <- 5
+xn <- array(0,c(1000,n))
+for(i in 1:n){
+  for(j in 1:1000){
+    xn[j,i] <- rexp(1,delta)[[1]]
+  }
+}
+promedio5 <- rep(0,1000)
+for(k in 1:1000){
+  promedio5[k] <- sum(xn[k,])/n
+}
+
+n <- 30
+xn <- array(0,c(1000,n))
+for(i in 1:n){
+  for(j in 1:1000){
+    xn[j,i] <- rexp(1,delta)[[1]]
+  }
+}
+promedio30 <- rep(0,1000)
+for(k in 1:1000){
+  promedio30[k] <- sum(xn[k,])/n
+}
+
+n <- 500
+xn <- array(0,c(1000,n))
+for(i in 1:n){
+  for(j in 1:1000){
+    xn[j,i] <- rexp(1,delta)[[1]]
+  }
+}
+promedio500 <- rep(0,1000)
+for(k in 1:1000){
+  promedio500[k] <- sum(xn[k,])/n
+}
+
+
+boxplot(promedio2, promedio5, promedio30, promedio500)
+
+#####################################################################################################################
+#Enunciado 3. El teorema central del límite nos dice que cuando hacemos la siguiente transformación con los promedios:  
+# la distribución de esta variable aleatoria se aproxima a la de la normal estándar si n es suficientemente grande. 
+# Comprobaremos mediante una simulación este resultado. 
+#(a) Calcular la esperanza y varianza de X1 donde X1 es la misma distribución que en el ejercicio 2. 
+
+delta <- 0.4
+x1 <- rexp(1000,delta)
+esperanzaX1 <- mean(x1)
+varianzaX1 <- var(x1)*((1000-1)/1000)
+esperanzaX1
+varianzaX1
+
+#(b) Realizar la transformación mencionada en los 4 conjuntos de datos del ítem 2 y graficar 
+# box-plots paralelos y QQ-plots. 
+
+promedion <- function(n,delta){
+  xn <- array(0,c(1000,n))
+  for(i in 1:n){
+    for(j in 1:1000){
+      xn[j,i] <- rexp(1,delta)[[1]]
+    }
+  }
+  promedioaux <- rep(0,1000)
+  for(k in 1:1000){
+    promedioaux[k] <- sum(xn[k,])/n
+  }
+  promedion <- promedioaux
+}
+
+delta <- 0.4
+x1 <- rexp(1000,delta)
+esperanzaX1 <- mean(x1)
+varianzaX1 <- var(x1)*((1000-1)/1000)
+promedio2 <- promedion(2,delta)
+promedio5 <- promedion(5,delta)
+promedio30 <- promedion(30,delta)
+promedio500 <- promedion(500,delta)
+
+normalizacion <- function(n,promedion){
+  normalizacion <- (promedion - esperanzaX1) / (  (varianzaX1/n) ^ 1/2  )
+}
+
+nuevoX2 <- normalizacion(2,promedio2)
+nuevoX5 <- normalizacion(5,promedio5)
+nuevoX30 <- normalizacion(30,promedio30)
+nuevoX500 <- normalizacion(500,promedio500)
+
+boxplot(nuevoX2,nuevoX5,nuevoX30,nuevoX500)
+qqnorm(nuevoX2)
+qqline(nuevoX2)
+qqnorm(nuevoX5)
+qqline(nuevoX5)
+qqnorm(nuevoX30)
+qqline(nuevoX30)
+qqnorm(nuevoX500)
+qqline(nuevoX500)
+
+#(c) Realizar 4 histogramas y a cada uno de ellos superponerle la densidad de la normal estándar.
+
+printHis <- function(vec){
+  hist(vec, freq=F, breaks=12)
+  lines(seq(-500, 500, by=.5), 
+        dnorm(seq(-500, 500, by=.5), mean(vec), sd(vec)),
+        col="blue")
+}
+
+printHis(nuevoX2)
+printHis(nuevoX5)
+printHis(nuevoX30)
+printHis(nuevoX500)
+
+
+#(d) Explicar los resultados obtenidos. 
 
 
 
-
-
-
-
-
-
-
-
-
-#PARA MANDAR TP NAHUEL.I.ARCA@GMAIL.COM
 
 
 
