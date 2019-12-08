@@ -262,9 +262,61 @@ printHis(nuevoX500)
 
 #(d) Explicar los resultados obtenidos. 
 
+inimos N = as
+
+#4. Sea (Ui)i???N una sucesion de variables aleatorias uniformes en [0,1]. Definimos N = inf{n ??? N :
+#SUM(i=1,n)Ui ??? 1}. Realizar simulaciones de la variable aleatoria N ...
+
+sumOfnUniforms <- function(n){
+  sumOfnUniforms <- sum(runif(n,0,1))
+}
+
+calculateInf <- function(x){
+  nInf <- x
+  for(n in 1:x){
+    s <- sumOfnUniforms(n)
+    if(s >= 1 && n <= nInf){
+      nInf <- n
+      #"my n that I consider, presently, as the infinum"
+      #nInf
+      #"my sum of nInf number of uniform variables"
+      #s
+      break
+    }
+  }
+  "my sum of the final sum of uniform variables"
+  s
+  "final infinum"
+  calculateInf <- nInf
+}
+
+z <- calculateInf(1000)
+inimos N = as
+#...y estimar E(N).
+#Se estima haciendo el promedio, y nada mas.
+
+
+x <- 1000
+v <- rep(0,x)
+for(i in 1:x){
+  v[i] <- calculateInf(x)
+}
+y <- sum(v)/x
+                            y
+inimos N = as
+
+#5. Se compararon tres dietas respecto al control de azucar
+#en la sangre en pacientes diabeticos. En el archivo estad descriptiva.txt 
+#se encuentran los valores de glucosa para las tres dietas consideradas
+#(A, B, C), que contienen las lecturas de glucosa en la sangre de los pacientes.
+#Es deseable que el paciente tenga valores entre 80 - 110 mg/dl.
+#(a) Cargue los datos al R.
 
 
 
-
+#(b) Para cada una de las tres dietas calcule medidas de centralidad:
+# la media, la mediana, la media ??-podada para ?? = 0.1, 0.2. Para cada dieta 
+# compare los valores obtenidos de las cuatro medidas de posicion, si observa
+# una notable diferencia ¿a que podria deberse?
 
 
