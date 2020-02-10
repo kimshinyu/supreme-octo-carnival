@@ -54,7 +54,6 @@ plot(xC,distribucionC, type='l')
 
 
 #####################################################################################################################
-
 #2. Para apreciar aún un poco más la Ley de los Grandes Números, realizar el siguiente experimento:
 #  (a) Considerar dos observaciones x 1 y x 2 de variables aleatorias X 1 y X 2 independientes con dis-
 #  tribución E(Î») (para algún Î» a elección) y guardar el promedio de ambas, es decir, x 2 . Repetir
@@ -261,11 +260,11 @@ printHis(nuevoX500)
 
 
 #(d) Explicar los resultados obtenidos. 
+#A medida que aumenta el n, las graficas se van asemejando más a la densidad de una normal estándar.
 
-inimos N = as
-
-#4. Sea (Ui)i???N una sucesion de variables aleatorias uniformes en [0,1]. Definimos N = inf{n ??? N :
-#SUM(i=1,n)Ui ??? 1}. Realizar simulaciones de la variable aleatoria N ...
+#####################################################################################################################
+#4. Sea (Ui)ieN una sucesion de variables aleatorias uniformes en [0,1]. Definimos N = inf{n e N :
+  #SUM(i=1,n)Ui >= 1}. Realizar simulaciones de la variable aleatoria N ...
 
 sumOfnUniforms <- function(n){
   sumOfnUniforms <- sum(runif(n,0,1))
@@ -277,7 +276,7 @@ calculateInf <- function(x){
     s <- sumOfnUniforms(n)
     if(s >= 1 && n <= nInf){
       nInf <- n
-      #"my n that I consider, presently, as the infinum"
+      #"my n that I consider, presently, as the infimum"
       #nInf
       #"my sum of nInf number of uniform variables"
       #s
@@ -290,11 +289,9 @@ calculateInf <- function(x){
   calculateInf <- nInf
 }
 
-z <- calculateInf(1000)
-inimos N = as
+z <- calculateInf(10000)
 #...y estimar E(N).
 #Se estima haciendo el promedio, y nada mas.
-
 
 x <- 1000
 v <- rep(0,x)
@@ -302,21 +299,177 @@ for(i in 1:x){
   v[i] <- calculateInf(x)
 }
 y <- sum(v)/x
-                            y
-inimos N = as
+y
 
+#####################################################################################################################
 #5. Se compararon tres dietas respecto al control de azucar
 #en la sangre en pacientes diabeticos. En el archivo estad descriptiva.txt 
 #se encuentran los valores de glucosa para las tres dietas consideradas
 #(A, B, C), que contienen las lecturas de glucosa en la sangre de los pacientes.
 #Es deseable que el paciente tenga valores entre 80 - 110 mg/dl.
 #(a) Cargue los datos al R.
-
+  #enviroment, import data set,fromtext(base)
 
 
 #(b) Para cada una de las tres dietas calcule medidas de centralidad:
-# la media, la mediana, la media ??-podada para ?? = 0.1, 0.2. Para cada dieta 
-# compare los valores obtenidos de las cuatro medidas de posicion, si observa
-# una notable diferencia ¿a que podria deberse?
+# la media,
+meanA <- mean(dietas$dietaa)
+meanB <- mean(dietas$dietab)
+meanC <- mean(dietas$dietac)
 
+# la mediana,
+fiftyqA <- quantile(c(dietas$dietaa))
+fiftyqB <- quantile(c(dietas$dietab))
+fiftyqC <- quantile(c(dietas$dietac))
 
+# la media 0.1-podada 
+meanTrim0point1A <- mean(dietas$dietaa,trim=0.1)
+meanTrim0point1B <- mean(dietas$dietab,trim=0.1)
+meanTrim0point1C <- mean(dietas$dietac,trim=0.1)
+
+# la media 0.2-podada
+meanTrim0point2A <- mean(dietas$dietaa,trim=0.2)
+meanTrim0point2B <- mean(dietas$dietab,trim=0.2)
+meanTrim0point2C <- mean(dietas$dietac,trim=0.2)
+
+meanA
+meanB
+meanC
+
+fiftyqA
+fiftyqB
+fiftyqC
+
+meanTrim0point1A
+meanTrim0point1B
+meanTrim0point1C
+
+meanTrim0point2A
+meanTrim0point2B
+meanTrim0point2C
+
+#Para cada dieta compare los valores obtenidos de las cuatro medidas de posicion,
+#si observa una notable diferencia ¿a que podria deberse?
+  #Si bien entra las dos primeras dietas no hay una notable diferencia, no es así al considerar la dieta-c. 
+  #Es posible que esto se deba a una distribución dispareja de sus valores, lo cual se puede observar 
+  #por la diferencia entre la media y la mediana de la misma, que presentan una diferencia bastante mas grande 
+  #que las vistas en las otras dietas.
+
+#(c) Calcule medidas de dispersión: el desvío estándar, 
+deA <- var(dietas$dietaa)^(0.5)
+deB <- var(dietas$dietab)^(0.5)
+deC <- var(dietas$dietac)^(0.5)
+deA
+deB
+deC
+
+##la distancia inter-cuartil (o inter-cuartos)
+distInterCuartilA <- quantile(c(dietas$dietaa))[4] - quantile(c(dietas$dietaa))[2]
+distInterCuartilA
+distInterCuartilB <- quantile(c(dietas$dietab))[4] - quantile(c(dietas$dietab))[2]
+distInterCuartilB
+distInterCuartilC <- quantile(c(dietas$dietac))[4] - quantile(c(dietas$dietac))[2]
+distInterCuartilC
+
+##y la MAD en cada una de las dietas.
+  calcularMAD <- function(vectorDeFuncion){
+    calcularMAD <- sum(vectorDeFuncion - mean(vectorDeFuncion))/length(vectorDeFuncion)
+  }  
+
+  MADA <- calcularMAD(dietas$dietaa)
+  MADB <- calcularMAD(dietas$dietab)
+  MADC <- calcularMAD(dietas$dietac)
+  MADA
+  MADB
+  MADC
+  
+#Compare los valores de dispersión obtenidos, si observa una notable diferencia ¿a qué podría deberse? 
+#¿Cuál de las dietas parece ser la más estable? 
+ # La mayor diferencia se nota en los valores de la dieta-b, que tiene un mayor desvío estándar.
+ # La más estable parecería ser la dieta-a, dado que presenta menor desvío estándar y distancia inter-cuartil. 
+ # Las MAD son muy similares.
+  
+#(d) Obtenga los percentiles 10, 25, 50, 75 y 90. Compare los valores de los percentiles 
+##obtenidos entre las distintas dietas. 
+  diezA <- quantile(c(dietas$dietaa),0.1)
+  veinticincoA <- quantile(c(dietas$dietaa))[2]
+  cincuentaA <- quantile(c(dietas$dietaa))[3]
+  setentaycincoA <- quantile(c(dietas$dietaa))[4]
+  noventaA <- quantile(c(dietas$dietaa),0.9)
+  
+  diezB <- quantile(c(dietas$dietab),0.1)
+  veinticincoB <- quantile(c(dietas$dietab))[2]
+  cincuentaB <- quantile(c(dietas$dietab))[3]
+  setentaycincoB <- quantile(c(dietas$dietab))[4]
+  noventaB <- quantile(c(dietas$dietab),0.9)
+  
+  diezC <- quantile(c(dietas$dietac),0.1)
+  veinticincoC <- quantile(c(dietas$dietac))[2]
+  cincuentaC <- quantile(c(dietas$dietac))[3]
+  setentaycincoC <- quantile(c(dietas$dietac))[4]
+  noventaC <- quantile(c(dietas$dietac),0.9)
+  
+  diezA
+  veinticincoA
+  cincuentaA
+  setentaycincoA
+  noventaA
+  
+  diezB
+  veinticincoB
+  cincuentaB
+  setentaycincoB
+  noventaB
+  
+  diezC
+  veinticincoC
+  cincuentaC
+  setentaycincoC
+  noventaC
+
+#(e) Construya histogramas que permitan visualizar los valores de glucosa para cada dieta. 
+  hist(dietas$dietaa)
+  hist(dietas$dietab)
+  hist(dietas$dietac)
+  
+#Compare la distribución de glucosa. En alguna de ellas ¿parece haber valores alejados?
+  #Si. En realidad, en todas. (se cuentan: valores por encima de los 120 y aquellos menores a 70)
+  
+#¿Las dietas mantienen a los pacientes en los valores deseados? 
+  #Solo la dieta a parece mantener notablemente los valores entre 80 y 110.
+  
+#¿La distribución de glucosa es asimétrica en alguno de los grupos?
+  #Si. La misma se ve muy tirada a izquierda para la dieta c.
+  
+#¿En algún caso el ajuste normal parece razonable? 
+  #Si; los valores de glucosa de aquellos que siguen la dieta A parecería estar siguiendo una distribución normal.
+  
+#Realice los diagramas de tallo-hoja correspondientes. 
+  stem(dietas$dietaa) 
+  stem(dietas$dietab) 
+  stem(dietas$dietac) 
+  
+#(f) Grafique los box-plots correspondientes.
+  boxplot(dietas$dietaa, xlab="dietaA")
+  boxplot(dietas$dietab, xlab="dietaB")
+  boxplot(dietas$dietac, xlab="dietaC")
+  
+#¿Cómo se compara la información que dan estos gráficos con la obtenida con los histogramas? 
+#En base a los gráficos obtenidos, discuta simetría, presencia de outliers y compare dispersiones nuevamente. 
+  #Nuevamente se ve que la dieta-a presenta similitudes con una distribución normal.
+  #De la dieta-b, se sigue viendo la simetría, aunque es más fácil ver en el histograma
+  #la 'trampa' que tienen sus datos, escondiendo el hecho de que hay tan pocos valores en su centro.
+  #En el box-plot de la dieta-c se ve muy bien la asimetría presente, así como la presencia de 
+  #valores muy alejados en los extremos.
+
+#(g) Grafique los qq-plots correspondientes. ¿En algún caso el ajuste normal parece razonable? 
+  
+  qqnorm(dietas$dietaa) 
+  qqnorm(dietas$dietab) 
+  qqnorm(dietas$dietac) 
+
+  #Nuevamente, en el qq-plot normal~dieta-A se ven las similitudes, mientras que no tanto asi en los otros dos qq-plots.
+  
+  
+#(h) En base al análisis anterior, ¿cuál le parece la dieta más aconsejable?
+  #Basado en todo lo visto, la dieta mas recomendable parecería ser la dieta a.
